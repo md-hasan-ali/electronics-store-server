@@ -19,20 +19,47 @@ async function run() {
         await client.connect();
         const database = client.db("Eletronics-Store")
         const productCollection = database.collection("Products");
-
+        const orderCollection = database.collection("orders");
 
         // Get Api 
         app.get('/products', async (req, res) => {
             const result = await productCollection.find({}).toArray();
             res.send(result);
         });
-
         // Get Single Products
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
             const result = await productCollection.find(query).toArray();
             res.send(result);
+        })
+        // Post Order 
+        app.post('/orders', async (req, res) => {
+            const query = req.body;
+            const result = await orderCollection.insertOne(query);
+            res.send(result);
+        })
+        // Get All Orders 
+        app.get('/manageOrders', async (req, res) => {
+            const result = await orderCollection.find({}).toArray();
+            res.send(result)
+        })
+        // Delete single Order 
+        app.delete('/singleOrder/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(query);
+            res.send(result);
+        })
+        // Status Update Now 
+        app.put('/updateStatus/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const update = 'Approved';
+            const result = await orderCollection.updateOne(filter, {
+                $set: { status: update }
+            })
+            res.json(result)
         })
 
     }
