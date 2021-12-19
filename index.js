@@ -68,6 +68,30 @@ async function run() {
             const result = await productCollection.insertOne(query);
             res.send(result);
         })
+        // Delete a Single Product
+        app.delete('/deleteSingleProduct/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await productCollection.deleteOne(query);
+            res.send(result);
+        })
+        // Get My Orders 
+        app.get('/orders', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email }
+            const result = await orderCollection.find({}).toArray();
+            console.log(result);
+            res.send(result)
+        })
+        // Delete single data of my order
+        app.delete('/orders', async (req, res) => {
+            const id = req.query.id;
+            console.log(id)
+            const query = { _id: ObjectId(id) }
+            const result = await orderCollection.deleteOne(query)
+            console.log(result)
+            res.send(result)
+        })
 
     }
     finally {
